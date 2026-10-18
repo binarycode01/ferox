@@ -177,7 +177,7 @@ impl PgClientApp {
 
             let _ = cmd_tx.send(DbCommand::Connect(profile.clone()));
 
-            let name = format!("{}@{}", profile.database, profile.host);
+            let name = profile.display_label();
             let danger_color = profile
                 .resolved_color()
                 .map(|[r, g, b]| Color32::from_rgb(r, g, b))
@@ -216,7 +216,7 @@ impl PgClientApp {
 
         let _ = cmd_tx.send(DbCommand::Connect(profile.clone()));
 
-        let name = format!("{}@{}", profile.database, profile.host);
+        let name = profile.display_label();
         let danger_color = profile
             .resolved_color()
             .map(|[r, g, b]| Color32::from_rgb(r, g, b))
@@ -262,7 +262,6 @@ impl PgClientApp {
                             host: host.clone(),
                             database: database.clone(),
                         };
-                        self.connections[i].name = format!("{database}@{host}");
                         let _ = self.connections[i].db_tx.send(DbCommand::LoadSchemas);
                     }
                     DbEvent::ConnectionError(msg) => {

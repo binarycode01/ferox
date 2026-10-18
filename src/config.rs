@@ -62,6 +62,19 @@ pub struct ConnectionProfile {
     pub color: Option<[u8; 3]>,
 }
 
+impl ConnectionProfile {
+    /// Label for an active connection: `Name - database@host` (falls back to
+    /// `database@host` when the profile has no name).
+    pub fn display_label(&self) -> String {
+        let target = format!("{}@{}", self.database, self.host);
+        if self.name.trim().is_empty() {
+            target
+        } else {
+            format!("{} - {target}", self.name)
+        }
+    }
+}
+
 impl Default for ConnectionProfile {
     fn default() -> Self {
         Self {
