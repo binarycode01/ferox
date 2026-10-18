@@ -68,6 +68,7 @@ pub struct PgClientApp {
     pub safe_mode: bool,
     pub i18n: I18n,
     pub show_about: bool,
+    pub sidebar_open: bool,
     pub about_texture: Option<egui::TextureHandle>,
     /// One-shot channel for "Test Connection" — spawned only while testing.
     test_conn: Option<(Sender<DbCommand>, Receiver<DbEvent>)>,
@@ -154,6 +155,7 @@ impl PgClientApp {
             safe_mode: false,
             i18n,
             show_about: false,
+            sidebar_open: true,
             about_texture,
             test_conn: None,
             ai_tx: ai_cmd_tx,
@@ -452,6 +454,10 @@ impl PgClientApp {
     fn render_menu(&mut self, ui: &mut egui::Ui) {
         let i18n = self.i18n;
         egui::menu::bar(ui, |ui| {
+            let arrow = if self.sidebar_open { "◀" } else { "▶" };
+            if ui.button(arrow).on_hover_text(i18n.tip_toggle_sidebar()).clicked() {
+                self.sidebar_open = !self.sidebar_open;
+            }
             ui.menu_button(i18n.menu_connection(), |ui| {
                 if ui.button(i18n.menu_new_connection()).clicked() {
                     self.show_connection_dialog = true;
@@ -1027,6 +1033,10 @@ impl eframe::App for PgClientApp {
             }
         }
 
+        if ctx.input(|i| i.modifiers.ctrl && i.key_pressed(egui::Key::B)) {
+            self.sidebar_open = !self.sidebar_open;
+        }
+
         // Top menu bar
         egui::TopBottomPanel::top("menu_bar").show(ctx, |ui| {
             self.render_menu(ui);
@@ -1100,7 +1110,7 @@ impl eframe::App for PgClientApp {
             .resizable(true)
             .min_width(180.0)
             .default_width(220.0)
-            .show(ctx, |ui| {
+            .show_animated(ctx, self.sidebar_open, |ui| {
                 // Connection switcher at top
                 if !self.connections.is_empty() {
                     self.render_connection_switcher(ui);

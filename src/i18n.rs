@@ -31,6 +31,7 @@ impl I18n {
     pub fn menu_connection(&self) -> &'static str { self.t("Connection", "Bağlantı") }
     pub fn menu_new_connection(&self) -> &'static str { self.t("New Connection…", "Yeni Bağlantı…") }
     pub fn menu_disconnect(&self) -> &'static str { self.t("Disconnect", "Bağlantıyı Kes") }
+    pub fn tip_toggle_sidebar(&self) -> &'static str { self.t("Toggle sidebar (Ctrl+B)", "Kenar çubuğunu aç/kapat (Ctrl+B)") }
 
     // ── Menu — Query ─────────────────────────────────────────────────────────
 
